@@ -11,7 +11,7 @@ const style = path.resolve(__dirname, '.plantstyles');
  */
 function log(message) {
   const now = new Date();
-  console.log(`[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}] ${message}`);
+  console.log(`[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}] ${message}`);
 }
 
 /**
