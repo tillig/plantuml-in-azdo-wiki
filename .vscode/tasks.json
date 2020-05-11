@@ -1,0 +1,17 @@
+{
+  "tasks": [
+    {
+      "detail": "Generate PlantUML diagrams as puml files change.",
+      "group": {
+        "isDefault": true,
+        "kind": "build"
+      },
+      "label": "npm: watch",
+      "problemMatcher": [
+      ],
+      "script": "watch",
+      "type": "npm"
+    }
+  ],
+  "version": "2.0.0"
+}
