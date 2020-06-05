@@ -59,7 +59,7 @@ function calculateDiagramPath(pathToFile) {
 
 const watchOptions = {
   filter: function (f, stat) {
-    return (stat.isDirectory() && f.indexOf(".git") < 1 && f.indexOf(".vscode") < 1 && f.indexOf("node_modules") < 1) || f.endsWith('.puml');
+    return (stat && stat.isDirectory() && f.indexOf(".git") < 1 && f.indexOf(".vscode") < 1 && f.indexOf("node_modules") < 1) || f.endsWith('.puml');
   }
 };
 
