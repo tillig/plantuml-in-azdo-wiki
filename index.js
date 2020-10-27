@@ -21,7 +21,7 @@ function log(message) {
 function generateDiagram(pathToFile) {
   cleanupDiagram(pathToFile);
   const diagramPath = calculateDiagramPath(pathToFile);
-  log("Generating " + calculateDiagramPath(pathToFile));
+  log("Generating " + diagramPath);
   try {
     const gen = plantuml.generate(pathToFile, { format: "png", config: style });
     gen.out.pipe(fs.createWriteStream(diagramPath));
@@ -59,7 +59,7 @@ function calculateDiagramPath(pathToFile) {
 
 const watchOptions = {
   filter: function (f, stat) {
-    return (stat && stat.isDirectory() && f.indexOf(".git") < 1 && f.indexOf(".vscode") < 1 && f.indexOf("node_modules") < 1) || f.endsWith('.puml');
+    return stat && stat.isDirectory() && f.indexOf(".git") < 1 && f.indexOf(".vscode") < 1 && f.indexOf("node_modules") < 1 || f.endsWith('.puml');
   }
 };
 
@@ -71,32 +71,33 @@ watch.watchTree(__dirname, watchOptions, function (f, curr, prev) {
   const absolutePath = path.resolve(__dirname, f);
 
   if (prev === null) {
-    // f is a new file   
-    log("Watch 'new' " + absolutePath);
+    // f is a new file
     if (curr.isDirectory()) {
       log("Ignoring new directory " + absolutePath);
       return;
     }
+
+    log("Watch 'new' " + absolutePath);
     generateDiagram(absolutePath);
     return;
   } else if (curr.nlink === 0) {
-
     // f was removed
-    log("Watch 'removed' " + absolutePath);
     if (prev.isDirectory()) {
       log("Ignoring deleted directory " + absolutePath);
       return;
     }
+
+    log("Watch 'removed' " + absolutePath);
     cleanupDiagram(absolutePath);
     return;
   } else {
     // f was changed
-    log("Watch 'changed' " + absolutePath);
     if (curr.isDirectory()) {
       log("Ignoring changed directory " + absolutePath);
       return;
     }
-    generateDiagram(absolutePath);
 
+    log("Watch 'changed' " + absolutePath);
+    generateDiagram(absolutePath);
   }
 });
