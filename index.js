@@ -69,10 +69,6 @@ watch.watchTree(__dirname, watchOptions, function (f, curr, prev) {
   }
 
   const absolutePath = path.resolve(__dirname, f);
-  // isDir = fs.lstatSync(absolutePath).isDirectory(); 
-  // if (isDir) {
-
-  // }
 
   if (prev === null) {
     // f is a new file   
