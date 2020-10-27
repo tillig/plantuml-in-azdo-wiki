@@ -69,14 +69,34 @@ watch.watchTree(__dirname, watchOptions, function (f, curr, prev) {
   }
 
   const absolutePath = path.resolve(__dirname, f);
+
   if (prev === null) {
-    // f is a new file
+    // f is a new file   
+    log("Watch 'new' " + absolutePath);
+    if (curr.isDirectory()) {
+      log("Ignoring new directory " + absolutePath);
+      return;
+    }
     generateDiagram(absolutePath);
+    return;
   } else if (curr.nlink === 0) {
+
     // f was removed
+    log("Watch 'removed' " + absolutePath);
+    if (prev.isDirectory()) {
+      log("Ignoring deleted directory " + absolutePath);
+      return;
+    }
     cleanupDiagram(absolutePath);
+    return;
   } else {
     // f was changed
+    log("Watch 'changed' " + absolutePath);
+    if (curr.isDirectory()) {
+      log("Ignoring changed directory " + absolutePath);
+      return;
+    }
     generateDiagram(absolutePath);
+
   }
 });
