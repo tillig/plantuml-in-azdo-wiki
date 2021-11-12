@@ -1,0 +1,10 @@
+{
+  "cSpell.words": [
+    "plantstyles",
+    "plantuml",
+    "puml"
+  ],
+  "files.watcherExclude": {
+    "**/target": true
+  }
+}

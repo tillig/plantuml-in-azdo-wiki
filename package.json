@@ -1,12 +1,12 @@
 {
   "author": "Travis Illig",
   "dependencies": {
-    "node-plantuml": "^0.9.0",
-    "watch": "^1.0.2"
+    "chokidar": "^3.5.2",
+    "node-plantuml": "^0.9.0"
   },
   "description": "Example showing how to get PlantUML diagrams into an Azure DevOps wiki.",
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
+    "@babel/eslint-parser": "^7.16.3",
     "eslint": "^7.12.1"
   },
   "eslintConfig": {
@@ -17,7 +17,10 @@
     "extends": [
       "eslint:recommended"
     ],
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+      "requireConfigFile": false
+    },
     "rules": {
       "comma-dangle": 1,
       "eqeqeq": 2,
@@ -48,5 +51,5 @@
   "scripts": {
     "watch": "node index.js"
   },
-  "version": "1.0.0"
+  "version": "2.0.0"
 }

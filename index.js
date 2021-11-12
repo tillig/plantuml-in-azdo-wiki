@@ -1,5 +1,5 @@
-const watch = require('watch');
-const plantuml = require('node-plantuml');
+const chokidar = require('chokidar');
+const plantUml = require('node-plantuml');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +23,7 @@ function generateDiagram(pathToFile) {
   const diagramPath = calculateDiagramPath(pathToFile);
   log("Generating " + diagramPath);
   try {
-    const gen = plantuml.generate(pathToFile, { format: "png", config: style });
+    const gen = plantUml.generate(pathToFile, { format: "png", config: style });
     gen.out.pipe(fs.createWriteStream(diagramPath));
   } catch (error) {
     console.error(error);
@@ -57,47 +57,24 @@ function calculateDiagramPath(pathToFile) {
   return path.join(path.dirname(pathToFile), filename);
 }
 
-const watchOptions = {
-  filter: function (f, stat) {
-    return stat && stat.isDirectory() && f.indexOf(".git") < 1 && f.indexOf(".vscode") < 1 && f.indexOf("node_modules") < 1 || f.endsWith('.puml');
-  }
-};
-
-watch.watchTree(__dirname, watchOptions, function (f, curr, prev) {
-  if (typeof f === "object") {
-    return;
-  }
-
-  const absolutePath = path.resolve(__dirname, f);
-
-  if (prev === null) {
-    // f is a new file
-    if (curr.isDirectory()) {
-      log("Ignoring new directory " + absolutePath);
-      return;
+const watcher = chokidar
+  .watch('**/*.puml', {
+    persistent: true,
+    ignored: [/(^|[/\\])\../, 'node_modules'],
+    cwd: __dirname,
+    ignoreInitial: true
+  })
+  .on('all', (event, path) => {
+    switch (event) {
+      case 'add':
+      case 'change':
+        generateDiagram(path);
+        break;
+      case 'unlink':
+        cleanupDiagram(path);
+        break;
+      default:
+        log(`Ignoring event ${event} on ${path}`);
+        break;
     }
-
-    log("Watch 'new' " + absolutePath);
-    generateDiagram(absolutePath);
-    return;
-  } else if (curr.nlink === 0) {
-    // f was removed
-    if (prev.isDirectory()) {
-      log("Ignoring deleted directory " + absolutePath);
-      return;
-    }
-
-    log("Watch 'removed' " + absolutePath);
-    cleanupDiagram(absolutePath);
-    return;
-  } else {
-    // f was changed
-    if (curr.isDirectory()) {
-      log("Ignoring changed directory " + absolutePath);
-      return;
-    }
-
-    log("Watch 'changed' " + absolutePath);
-    generateDiagram(absolutePath);
-  }
-});
+  });
